@@ -24,8 +24,9 @@ logger = logging.getLogger(__name__)
 
 def run_cli():
     """Run the CLI interface."""
-    from exo.interfaces.cli.main import main
-    main()
+    from exo.interfaces.cli.main import main_loop
+    import asyncio
+    asyncio.run(main_loop())
 
 
 def run_api():
