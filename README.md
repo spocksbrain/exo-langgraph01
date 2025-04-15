@@ -50,13 +50,14 @@ The exo system consists of:
 - Python 3.10+
 - Node.js 16+ (for Web and Electron interfaces)
 - OpenAI API key
+- Python setuptools, pip, and wheel (automatically installed by setup scripts)
 
 ### Installation
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/example/exo.git
-cd exo
+git clone https://github.com/spocksbrain/exo-langgraph01.git
+cd exo-langgraph01
 ```
 
 2. Run the setup script:
@@ -69,6 +70,23 @@ cd exo
 ```
 
 3. Edit the `.env` file with your API keys and configuration.
+
+### Troubleshooting Installation
+
+If you encounter any issues during installation, here are some common solutions:
+
+#### ModuleNotFoundError: No module named 'autogen'
+The project requires the `autogen` package (not `autogen-agentchat`). This should be automatically installed by the setup script, but you can manually install it with:
+```bash
+pip install autogen
+```
+
+#### ModuleNotFoundError: No module named 'setuptools'
+If you get this error when running `setup.py`, it means the setuptools package is missing. Install it with:
+```bash
+pip install setuptools
+```
+The updated setup scripts should automatically handle this for you.
 
 ### Running the System
 
