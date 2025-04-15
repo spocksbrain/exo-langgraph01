@@ -131,6 +131,9 @@ async def process_input(input_text: str) -> Tuple[str, str]:
     if "error" in result:
         return result["error"], "error"
     
+    # Print the raw result for debugging
+    print(f"Result from process_user_input: {result}")
+    
     return result.get("response", ""), result.get("handled_by", "unknown")
 
 
