@@ -103,6 +103,13 @@ Provide clear, concise feedback about task progress.
         Returns:
             Response to the user
         """
+        # Check for empty input
+        if not input_text or input_text.strip() == "":
+            return {
+                "response": "I didn't receive any input. Please type a message.",
+                "handled_by": "pia"
+            }
+        
         metadata = metadata or {}
         input_type = metadata.get("input_type", "text")
         
@@ -113,13 +120,23 @@ Provide clear, concise feedback about task progress.
         # Determine if this is a simple query or a complex task
         task_complexity = self._determine_task_complexity(input_text)
         
-        if task_complexity == "simple":
-            # Handle simple queries directly
-            response = await self._handle_simple_query(input_text)
-            return {"response": response, "handled_by": "pia"}
-        else:
-            # Delegate to appropriate agent
-            return await self._delegate_task(input_text, task_complexity)
+        try:
+            if task_complexity == "simple":
+                # Handle simple queries directly
+                response = await self._handle_simple_query(input_text)
+                return {"response": response, "handled_by": "pia"}
+            else:
+                # Delegate to appropriate agent
+                return await self._delegate_task(input_text, task_complexity)
+        except Exception as e:
+            # Handle any errors during processing
+            import logging
+            logging.exception(f"Error processing input: {input_text}")
+            return {
+                "response": f"I encountered an error while processing your request: {str(e)}",
+                "handled_by": "pia",
+                "error": str(e)
+            }
     
     def _determine_task_complexity(self, input_text: str) -> str:
         """Determine the complexity of a user task.

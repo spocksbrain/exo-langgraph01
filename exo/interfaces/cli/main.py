@@ -151,12 +151,16 @@ async def main_loop():
         input_text = Prompt.ask(
             f"[bold blue]{CLI_CONFIG['prompt']}[/bold blue]",
             console=console,
-        )
+        ).strip()
         
         # Check for exit command
         if input_text.lower() in ["exit", "quit"]:
             console.print("[bold blue]Goodbye![/bold blue]")
             break
+        
+        # Check for empty input
+        if not input_text:
+            continue
         
         # Save to history
         save_history(input_text)

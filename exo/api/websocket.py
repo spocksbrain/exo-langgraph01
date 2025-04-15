@@ -6,6 +6,7 @@ This module provides WebSocket endpoints for real-time communication with the ex
 import asyncio
 import json
 import logging
+import time
 from typing import Dict, Any, List, Set, Optional
 
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect, Depends
@@ -91,6 +92,10 @@ class ConnectionManager:
         for key in keys_to_remove:
             del last_messages[key]
         
+        # Clean up rate limiting data
+        if websocket_id in last_input_time:
+            del last_input_time[websocket_id]
+        
         logger.info(f"WebSocket client disconnected, total connections: {len(self.active_connections)}")
     
     async def send_message(self, websocket: WebSocket, message: WSMessage):
@@ -121,6 +126,11 @@ manager = ConnectionManager()
 
 # Track the last message sent to each client to prevent duplicates
 last_messages = {}
+
+# Rate limiting: Track the last time a user sent a message
+last_input_time = {}
+# Minimum time between inputs in seconds
+MIN_INPUT_INTERVAL = 1.0
 
 # Message handler for agent messages
 async def handle_agent_message(websocket: WebSocket, message: Message):
@@ -189,6 +199,37 @@ async def websocket_endpoint(
                     # Process user input
                     input_text = message_data.get("data", {}).get("text", "")
                     metadata = message_data.get("data", {}).get("metadata", {})
+                    
+                    # Check for empty input
+                    if not input_text or input_text.strip() == "":
+                        await manager.send_message(
+                            websocket,
+                            WSResponseMessage(
+                                data={
+                                    "response": "I didn't receive any input. Please type a message.",
+                                    "handled_by": "system"
+                                }
+                            )
+                        )
+                        continue
+                    
+                    # Apply rate limiting
+                    websocket_id = id(websocket)
+                    current_time = time.time()
+                    if websocket_id in last_input_time:
+                        time_since_last_input = current_time - last_input_time[websocket_id]
+                        if time_since_last_input < MIN_INPUT_INTERVAL:
+                            # Too many requests, send rate limit message
+                            await manager.send_message(
+                                websocket,
+                                WSStatusMessage(
+                                    data={"status": "rate_limited", "message": "Please wait a moment before sending another message."}
+                                )
+                            )
+                            continue
+                    
+                    # Update last input time
+                    last_input_time[websocket_id] = current_time
                     
                     # Process the input asynchronously
                     asyncio.create_task(
