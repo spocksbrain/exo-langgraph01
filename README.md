@@ -48,7 +48,7 @@ The exo system consists of:
 ### Prerequisites
 
 - Python 3.10+
-- Node.js 16+ (for Web and Electron interfaces)
+- Node.js 16+ and npm (required for Web and Electron interfaces)
 - OpenAI API key
 - Python setuptools, pip, and wheel (automatically installed by setup scripts)
 
@@ -60,16 +60,29 @@ git clone https://github.com/spocksbrain/exo-langgraph01.git
 cd exo-langgraph01
 ```
 
-2. Run the setup script:
+2. Run the setup script from the root directory of the project:
 ```bash
 # On Linux/macOS
+chmod +x exo/setup.sh  # Make the script executable if needed
 ./exo/setup.sh
 
 # On Windows
 .\exo\setup.bat
 ```
 
-3. Edit the `.env` file with your API keys and configuration.
+The setup script will:
+- Create a virtual environment
+- Install required Python packages
+- Install the exo package in development mode
+- Create a .env file from the template
+
+3. Edit the `.env` file with your API keys and configuration:
+   - `OPENAI_API_KEY`: Your OpenAI API key (required)
+   - `OPENAI_MODEL`: The OpenAI model to use (default: "gpt-4")
+   - `NEO4J_URI`: URI for Neo4j database (optional, for knowledge graph)
+   - `NEO4J_USERNAME`: Username for Neo4j database (optional)
+   - `NEO4J_PASSWORD`: Password for Neo4j database (optional)
+   - `CHROMADB_PATH`: Path to store ChromaDB vector database (optional)
 
 ### Troubleshooting Installation
 
@@ -92,42 +105,90 @@ pip install setuptools
 ```
 The updated setup scripts should automatically handle this for you.
 
+#### Node.js and npm issues (Web and Electron interfaces)
+If you encounter issues with the Web or Electron interfaces:
+
+1. Make sure Node.js (v16+) and npm are installed:
+```bash
+node --version
+npm --version
+```
+
+2. If you get errors about missing dependencies, try manually installing them:
+```bash
+# For Web interface
+cd exo/interfaces/web
+npm install
+
+# For Electron interface
+cd exo/interfaces/electron
+npm install
+```
+
+3. If you see errors about port conflicts when running the Web interface, you can specify a different port:
+```bash
+cd exo/interfaces/web
+npm run dev -- -p 3001
+```
+
 ### Running the System
 
-#### CLI Interface
+There are multiple ways to run the exo system:
+
+#### 1. Using the Module-Based Execution (Recommended)
+
+This is the primary way to run the system:
 
 ```bash
-python -m exo cli
+# Activate the virtual environment first
+source venv/bin/activate  # On Linux/macOS
+venv\Scripts\activate.bat  # On Windows
+
+# Run the desired interface
+python -m exo [interface]
 ```
 
-#### API Server
+Where `[interface]` is one of:
+- `cli`: Command-line interface
+- `api`: API server
+- `web`: Web interface
+- `mcp`: Model Context Protocol server
+- `electron`: Electron desktop app
+- `all`: Run API, MCP, and Electron interfaces together
+
+#### 2. Using the Run Script
+
+The run.py script provides a wrapper around the module-based execution with additional checks:
 
 ```bash
-python -m exo api
+python run.py --interface [interface] [--debug]
 ```
 
-#### Web Interface
+#### 3. Interface-Specific Execution
+
+You can also run specific interfaces directly:
 
 ```bash
-python -m exo web
+# CLI Interface
+python -m exo.interfaces.cli
+
+# API Server
+python -m exo.api.app
+
+# MCP Server
+python -m exo.mcp
+
+# Electron App
+python -m exo.interfaces.electron
 ```
 
-#### MCP Server
+#### 4. Development Server for Web Interface
+
+For web development, you can run the Next.js development server directly:
 
 ```bash
-python -m exo mcp
-```
-
-#### Electron Desktop App
-
-```bash
-python -m exo electron
-```
-
-#### All Interfaces
-
-```bash
-python -m exo all
+cd exo/interfaces/web
+npm run dev
 ```
 
 ## Project Structure

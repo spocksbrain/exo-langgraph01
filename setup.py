@@ -17,8 +17,8 @@ setup(
     description="A multi-agent AI system with hierarchical agent architecture",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/example/exo",
-    packages=["exo"],
+    url="https://github.com/spocksbrain/exo-langgraph01",
+    packages=find_packages(),
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Intended Audience :: Developers",
