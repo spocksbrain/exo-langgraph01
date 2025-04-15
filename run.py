@@ -19,6 +19,9 @@ logger = logging.getLogger(__name__)
 
 def main():
     """Main entry point."""
+    # Print command line arguments for debugging
+    print(f"Command line arguments: {sys.argv}")
+    
     parser = argparse.ArgumentParser(description="Run the exo multi-agent system")
     parser.add_argument(
         "interface",
@@ -34,6 +37,7 @@ def main():
     )
     
     args = parser.parse_args()
+    print(f"Parsed arguments: interface={args.interface}, debug={args.debug}")
     
     # Configure logging
     if args.debug:
