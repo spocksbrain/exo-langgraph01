@@ -4,6 +4,18 @@ Configuration settings for the exo multi-agent system.
 import os
 from pathlib import Path
 from typing import Dict, Any, Optional
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+# First try to load from the root directory
+root_env_path = Path(__file__).parent.parent / ".env"
+if root_env_path.exists():
+    load_dotenv(root_env_path)
+else:
+    # If not found, try to load from the exo directory
+    exo_env_path = Path(__file__).parent / ".env"
+    if exo_env_path.exists():
+        load_dotenv(exo_env_path)
 
 # Base directories
 BASE_DIR = Path(__file__).parent
@@ -15,14 +27,14 @@ DATA_DIR.mkdir(exist_ok=True)
 LOGS_DIR.mkdir(exist_ok=True)
 
 # API settings
-API_HOST = os.getenv("EXO_API_HOST", "127.0.0.1")
-API_PORT = int(os.getenv("EXO_API_PORT", "8000"))
-API_DEBUG = os.getenv("EXO_API_DEBUG", "False").lower() == "true"
+API_HOST = os.getenv("EXO_API_HOST", os.getenv("API_HOST", "127.0.0.1"))
+API_PORT = int(os.getenv("EXO_API_PORT", os.getenv("API_PORT", "8000")))
+API_DEBUG = os.getenv("EXO_API_DEBUG", os.getenv("API_DEBUG", "False")).lower() == "true"
 
 # LLM settings
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
-DEFAULT_MODEL = os.getenv("EXO_DEFAULT_MODEL", "gpt-4-turbo")
-EMBEDDING_MODEL = os.getenv("EXO_EMBEDDING_MODEL", "text-embedding-ada-002")
+DEFAULT_MODEL = os.getenv("EXO_DEFAULT_MODEL", os.getenv("DEFAULT_MODEL", "gpt-4-turbo"))
+EMBEDDING_MODEL = os.getenv("EXO_EMBEDDING_MODEL", os.getenv("EMBEDDING_MODEL", "text-embedding-ada-002"))
 
 # Knowledge system settings
 NEO4J_URI = os.getenv("EXO_NEO4J_URI", "bolt://localhost:7687")

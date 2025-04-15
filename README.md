@@ -112,11 +112,13 @@ cp exo/.env.example .env
 
 3. Edit the `.env` file with your API keys and configuration:
    - `OPENAI_API_KEY`: Your OpenAI API key (required)
-   - `OPENAI_MODEL`: The OpenAI model to use (default: "gpt-4")
-   - `NEO4J_URI`: URI for Neo4j database (optional, for knowledge graph)
-   - `NEO4J_USERNAME`: Username for Neo4j database (optional)
-   - `NEO4J_PASSWORD`: Password for Neo4j database (optional)
-   - `CHROMADB_PATH`: Path to store ChromaDB vector database (optional)
+   - `EXO_DEFAULT_MODEL` or `DEFAULT_MODEL`: The OpenAI model to use (default: "gpt-4-turbo")
+   - `EXO_NEO4J_URI` or `NEO4J_URI`: URI for Neo4j database (optional, for knowledge graph)
+   - `EXO_NEO4J_USER` or `NEO4J_USER`: Username for Neo4j database (optional)
+   - `EXO_NEO4J_PASSWORD` or `NEO4J_PASSWORD`: Password for Neo4j database (optional)
+   
+   Note: The system will look for a `.env` file in the root directory first, then in the `exo/` directory.
+   Both formats (with or without the `EXO_` prefix) are supported for backward compatibility.
 
 ### Troubleshooting Installation
 

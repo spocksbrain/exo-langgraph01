@@ -66,8 +66,10 @@ class BaseAgent(ABC):
         )
         
         # Initialize autogen config
+        from exo.config import OPENAI_API_KEY
+        
         self.llm_config = {
-            "config_list": [{"model": model}],
+            "config_list": [{"model": model, "api_key": OPENAI_API_KEY}],
             "temperature": 0.1,
         }
         
