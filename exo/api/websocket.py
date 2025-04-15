@@ -84,6 +84,13 @@ class ConnectionManager:
             websocket: WebSocket connection
         """
         self.active_connections.remove(websocket)
+        
+        # Clean up last_messages for this websocket
+        websocket_id = id(websocket)
+        keys_to_remove = [key for key in last_messages if key.startswith(f"{websocket_id}:")]
+        for key in keys_to_remove:
+            del last_messages[key]
+        
         logger.info(f"WebSocket client disconnected, total connections: {len(self.active_connections)}")
     
     async def send_message(self, websocket: WebSocket, message: WSMessage):
@@ -112,6 +119,9 @@ class ConnectionManager:
 manager = ConnectionManager()
 
 
+# Track the last message sent to each client to prevent duplicates
+last_messages = {}
+
 # Message handler for agent messages
 async def handle_agent_message(websocket: WebSocket, message: Message):
     """Handle a message from an agent.
@@ -120,6 +130,17 @@ async def handle_agent_message(websocket: WebSocket, message: Message):
         websocket: WebSocket connection
         message: Agent message
     """
+    # Create a unique key for this websocket and message combination
+    key = f"{id(websocket)}:{message.from_agent}:{message.to_agent}"
+    
+    # Check if this is a duplicate message
+    if key in last_messages and last_messages[key] == message.content:
+        logger.debug(f"Skipping duplicate message: {message.content[:50]}...")
+        return
+    
+    # Store this message as the last one for this key
+    last_messages[key] = message.content
+    
     # Create a WebSocket message
     ws_message = WSResponseMessage(
         data={

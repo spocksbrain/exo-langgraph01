@@ -82,6 +82,8 @@ def display_thinking():
     with console.status("[bold blue]Thinking...[/bold blue]", spinner="dots"):
         # This will be replaced by the actual response
         yield
+        # Stop the animation when we're done
+        return
 
 
 def save_history(input_text: str):
@@ -159,16 +161,34 @@ async def main_loop():
         # Save to history
         save_history(input_text)
         
-        # Display thinking animation
-        for _ in display_thinking():
+        # Start thinking animation
+        thinking = display_thinking()
+        next(thinking)  # Start the animation
+        
+        try:
             # Process the input
             response, handled_by = await process_input(input_text)
+            
+            # Stop thinking animation
+            try:
+                next(thinking)  # This will raise StopIteration
+            except StopIteration:
+                pass
             
             # Display the response
             if handled_by == "error":
                 display_error(response)
             else:
                 display_response(response, handled_by)
+        except Exception as e:
+            # Stop thinking animation
+            try:
+                next(thinking)  # This will raise StopIteration
+            except StopIteration:
+                pass
+            
+            # Display the error
+            display_error(str(e))
 
 
 @click.command()
