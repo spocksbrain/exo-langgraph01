@@ -18,7 +18,15 @@ pip install --upgrade pip setuptools wheel
 
 # Install dependencies
 echo "Installing dependencies..."
-pip install -r requirements.txt
+# Make sure we're using the correct path to requirements.txt
+if [ -f "exo/requirements.txt" ]; then
+    pip install -r exo/requirements.txt
+elif [ -f "requirements.txt" ]; then
+    pip install -r requirements.txt
+else
+    echo "Error: requirements.txt not found"
+    exit 1
+fi
 
 # Install exo in development mode
 echo "Installing exo in development mode..."

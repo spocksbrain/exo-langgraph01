@@ -78,6 +78,10 @@ If you encounter any issues during installation, here are some common solutions:
 #### ModuleNotFoundError: No module named 'autogen'
 The project requires the `autogen` package (not `autogen-agentchat`). This should be automatically installed by the setup script, but you can manually install it with:
 ```bash
+# From the root directory
+pip install -r exo/requirements.txt
+
+# Or directly install autogen
 pip install autogen
 ```
 
