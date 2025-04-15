@@ -54,6 +54,10 @@ The exo system consists of:
 
 ### Installation
 
+There are two ways to install the exo system:
+
+#### Option 1: Using the Setup Scripts (Recommended)
+
 1. Clone the repository:
 ```bash
 git clone https://github.com/spocksbrain/exo-langgraph01.git
@@ -75,6 +79,36 @@ The setup script will:
 - Install required Python packages
 - Install the exo package in development mode
 - Create a .env file from the template
+
+#### Option 2: Manual Installation
+
+1. Clone the repository:
+```bash
+git clone https://github.com/spocksbrain/exo-langgraph01.git
+cd exo-langgraph01
+```
+
+2. Create and activate a virtual environment:
+```bash
+# On Linux/macOS
+python -m venv venv
+source venv/bin/activate
+
+# On Windows
+python -m venv venv
+venv\Scripts\activate
+```
+
+3. Install the package in development mode:
+```bash
+# Install dependencies and the package
+pip install -e .
+```
+
+4. Create a .env file:
+```bash
+cp exo/.env.example .env
+```
 
 3. Edit the `.env` file with your API keys and configuration:
    - `OPENAI_API_KEY`: Your OpenAI API key (required)
@@ -130,6 +164,11 @@ npm install
 cd exo/interfaces/web
 npm run dev -- -p 3001
 ```
+
+#### Deprecation Warnings
+You may see deprecation warnings about license classifiers when running setup.py directly. This is normal and can be ignored. We've updated the project to use pyproject.toml for modern Python packaging, which addresses these warnings.
+
+Note: You should not run `python setup.py` directly without any commands. Instead, use `pip install -e .` to install the package in development mode.
 
 ### Running the System
 
