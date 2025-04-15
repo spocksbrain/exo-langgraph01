@@ -205,8 +205,10 @@ class CommandControlAgent(BaseAgent):
         self.active_tasks: Dict[str, TaskGraph] = {}
         
         # Initialize autogen assistant agent for task decomposition
+        # Replace spaces with underscores in the name for autogen (which doesn't allow spaces)
+        autogen_name = self.name.replace(" ", "_")
         self.assistant = AssistantAgent(
-            name=self.name,
+            name=autogen_name,
             system_message=self._get_task_decomposition_prompt(),
             llm_config=self.llm_config,
         )

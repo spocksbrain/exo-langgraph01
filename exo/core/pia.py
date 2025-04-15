@@ -46,8 +46,10 @@ class PrimaryInterfaceAgent(BaseAgent):
         self.voice_mode_active = False
         
         # Initialize autogen assistant agent
+        # Replace spaces with underscores in the name for autogen (which doesn't allow spaces)
+        autogen_name = self.name.replace(" ", "_")
         self.assistant = AssistantAgent(
-            name=self.name,
+            name=autogen_name,
             system_message=self.system_prompt,
             llm_config=self.llm_config,
         )
