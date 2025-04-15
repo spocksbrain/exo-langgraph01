@@ -60,25 +60,25 @@ def main():
     logger.info(f"Running exo with interface: {args.interface}")
     
     try:
-        # Import the appropriate module based on the interface
+        # Import the exo.__main__ module functions
+        from exo.__main__ import run_cli, run_api, run_web, run_mcp, run_electron, run_all
+        
+        # Run the selected interface
         if args.interface == "cli":
-            from exo.interfaces.cli.main import main as interface_main
+            run_cli()
         elif args.interface == "api":
-            from exo.api.app import start_api_server as interface_main
+            run_api()
         elif args.interface == "web":
-            from exo.__main__ import run_web as interface_main
+            run_web()
         elif args.interface == "mcp":
-            from exo.mcp.server import start_mcp_server as interface_main
+            run_mcp()
         elif args.interface == "electron":
-            from exo.interfaces.electron.__main__ import run_electron_app as interface_main
+            run_electron()
         elif args.interface == "all":
-            from exo.__main__ import run_all as interface_main
+            run_all()
         else:
             logger.error(f"Unknown interface: {args.interface}")
             sys.exit(1)
-        
-        # Run the interface
-        interface_main()
     except ImportError:
         logger.error("Failed to import exo. Please make sure it's installed.")
         logger.info("You can install it with: pip install -e .")
