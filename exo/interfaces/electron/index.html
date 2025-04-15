@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>exo - Multi-Agent System</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      background-color: #f5f5f5;
+      color: #333;
+    }
+    
+    header {
+      background-color: #fff;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      padding: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    h1 {
+      margin: 0;
+      font-size: 1.5rem;
+    }
+    
+    .logo {
+      color: #0ea5e9;
+      font-weight: bold;
+    }
+    
+    main {
+      flex: 1;
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .chat-container {
+      flex: 1;
+      background-color: #fff;
+      border-radius: 0.5rem;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    
+    .chat-messages {
+      flex: 1;
+      padding: 1rem;
+      overflow-y: auto;
+    }
+    
+    .message {
+      margin-bottom: 1rem;
+      max-width: 80%;
+    }
+    
+    .user-message {
+      margin-left: auto;
+      background-color: #0ea5e9;
+      color: #fff;
+      border-radius: 0.5rem 0 0.5rem 0.5rem;
+      padding: 0.5rem 1rem;
+    }
+    
+    .agent-message {
+      margin-right: auto;
+      background-color: #f0f0f0;
+      border-radius: 0 0.5rem 0.5rem 0.5rem;
+      padding: 0.5rem 1rem;
+    }
+    
+    .chat-input {
+      display: flex;
+      padding: 1rem;
+      border-top: 1px solid #eee;
+    }
+    
+    .chat-input input {
+      flex: 1;
+      padding: 0.5rem 1rem;
+      border: 1px solid #ddd;
+      border-radius: 0.25rem 0 0 0.25rem;
+      outline: none;
+    }
+    
+    .chat-input button {
+      padding: 0.5rem 1rem;
+      background-color: #0ea5e9;
+      color: #fff;
+      border: none;
+      border-radius: 0 0.25rem 0.25rem 0;
+      cursor: pointer;
+    }
+    
+    .chat-input button:hover {
+      background-color: #0284c7;
+    }
+    
+    .status-bar {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.5rem 1rem;
+      background-color: #f9f9f9;
+      border-top: 1px solid #eee;
+      font-size: 0.8rem;
+      color: #666;
+    }
+    
+    .dot {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: #0ea5e9;
+      box-shadow: 0 0 15px #0ea5e9;
+      animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+      0% {
+        transform: scale(1);
+        opacity: 0.8;
+      }
+      50% {
+        transform: scale(1.1);
+        opacity: 1;
+      }
+      100% {
+        transform: scale(1);
+        opacity: 0.8;
+      }
+    }
+    
+    .settings {
+      margin-top: 1rem;
+      padding: 1rem;
+      background-color: #fff;
+      border-radius: 0.5rem;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    .settings h2 {
+      margin-top: 0;
+      font-size: 1.2rem;
+    }
+    
+    .settings-row {
+      display: flex;
+      align-items: center;
+      margin-bottom: 0.5rem;
+    }
+    
+    .settings-row label {
+      flex: 1;
+    }
+    
+    .settings-row input {
+      flex: 2;
+      padding: 0.5rem;
+      border: 1px solid #ddd;
+      border-radius: 0.25rem;
+      margin-right: 0.5rem;
+    }
+    
+    .settings-row button {
+      padding: 0.5rem 1rem;
+      background-color: #0ea5e9;
+      color: #fff;
+      border: none;
+      border-radius: 0.25rem;
+      cursor: pointer;
+    }
+    
+    .settings-row button:hover {
+      background-color: #0284c7;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1><span class="logo">exo</span> Multi-Agent System</h1>
+    <div class="dot"></div>
+  </header>
+  
+  <main>
+    <div class="chat-container">
+      <div class="chat-messages" id="chat-messages">
+        <div class="message agent-message">
+          Hello! I'm exo, your multi-agent AI system. How can I help you today?
+        </div>
+      </div>
+      
+      <div class="chat-input">
+        <input type="text" id="message-input" placeholder="Type your message...">
+        <button id="send-button">Send</button>
+      </div>
+      
+      <div class="status-bar">
+        <div id="connection-status">Connected</div>
+        <div id="agent-status">Ready</div>
+      </div>
+    </div>
+    
+    <div class="settings">
+      <h2>Settings</h2>
+      <div class="settings-row">
+        <label for="python-path">Python Path:</label>
+        <input type="text" id="python-path" readonly>
+        <button id="select-python-path">Select</button>
+      </div>
+      <div class="settings-row">
+        <button id="restart-servers">Restart Servers</button>
+      </div>
+    </div>
+  </main>
+  
+  <script>
+    // DOM elements
+    const chatMessages = document.getElementById('chat-messages');
+    const messageInput = document.getElementById('message-input');
+    const sendButton = document.getElementById('send-button');
+    const connectionStatus = document.getElementById('connection-status');
+    const agentStatus = document.getElementById('agent-status');
+    const pythonPathInput = document.getElementById('python-path');
+    const selectPythonPathButton = document.getElementById('select-python-path');
+    const restartServersButton = document.getElementById('restart-servers');
+    
+    // WebSocket connection
+    let ws = null;
+    
+    // Connect to WebSocket
+    function connectWebSocket() {
+      ws = new WebSocket('ws://localhost:8000/ws');
+      
+      ws.onopen = () => {
+        connectionStatus.textContent = 'Connected';
+        connectionStatus.style.color = 'green';
+      };
+      
+      ws.onclose = () => {
+        connectionStatus.textContent = 'Disconnected';
+        connectionStatus.style.color = 'red';
+        
+        // Try to reconnect after 2 seconds
+        setTimeout(connectWebSocket, 2000);
+      };
+      
+      ws.onerror = (error) => {
+        console.error('WebSocket error:', error);
+        connectionStatus.textContent = 'Error';
+        connectionStatus.style.color = 'red';
+      };
+      
+      ws.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        console.log('WebSocket message:', data);
+        
+        if (data.type === 'response') {
+          // Add agent message to chat
+          addMessage(data.data.response || data.data.content, false);
+          agentStatus.textContent = 'Ready';
+        } else if (data.type === 'error') {
+          // Add error message to chat
+          addMessage(`Error: ${data.data.error}`, false);
+          agentStatus.textContent = 'Error';
+        }
+      };
+    }
+    
+    // Add message to chat
+    function addMessage(text, isUser) {
+      const messageDiv = document.createElement('div');
+      messageDiv.className = `message ${isUser ? 'user-message' : 'agent-message'}`;
+      messageDiv.textContent = text;
+      
+      chatMessages.appendChild(messageDiv);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+    
+    // Send message
+    function sendMessage() {
+      const text = messageInput.value.trim();
+      
+      if (!text || !ws || ws.readyState !== WebSocket.OPEN) {
+        return;
+      }
+      
+      // Add user message to chat
+      addMessage(text, true);
+      
+      // Clear input
+      messageInput.value = '';
+      
+      // Update status
+      agentStatus.textContent = 'Processing...';
+      
+      // Send message to WebSocket
+      ws.send(JSON.stringify({
+        type: 'user_input',
+        data: {
+          text: text,
+          metadata: {
+            timestamp: Date.now(),
+            source: 'electron',
+          },
+        },
+      }));
+    }
+    
+    // Event listeners
+    sendButton.addEventListener('click', sendMessage);
+    
+    messageInput.addEventListener('keypress', (event) => {
+      if (event.key === 'Enter') {
+        sendMessage();
+      }
+    });
+    
+    // Get Python path
+    if (window.api) {
+      // Get Python path
+      window.api.getPythonPath();
+      
+      // Listen for Python path
+      window.api.onPythonPath((path) => {
+        pythonPathInput.value = path;
+      });
+      
+      // Listen for Python path selected
+      window.api.onPythonPathSelected((path) => {
+        pythonPathInput.value = path;
+      });
+      
+      // Select Python path
+      selectPythonPathButton.addEventListener('click', () => {
+        window.api.selectPythonPath();
+      });
+      
+      // Restart servers
+      restartServersButton.addEventListener('click', () => {
+        window.api.restartServers();
+        
+        // Close WebSocket connection
+        if (ws) {
+          ws.close();
+        }
+        
+        // Reconnect after 2 seconds
+        setTimeout(connectWebSocket, 2000);
+      });
+    }
+    
+    // Connect to WebSocket
+    connectWebSocket();
+  </script>
+</body>
+</html>

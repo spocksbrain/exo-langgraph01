@@ -1,0 +1,58 @@
+# Include license and readme
+include LICENSE
+include README.md
+include CONTRIBUTING.md
+include CODE_OF_CONDUCT.md
+
+# Include configuration files
+include pyproject.toml
+include .flake8
+include .pre-commit-config.yaml
+include .env.example
+
+# Include requirements
+include exo/requirements.txt
+include dev-requirements.txt
+
+# Include setup scripts
+include exo/setup.sh
+include exo/setup.bat
+
+# Include prompts
+recursive-include prompts *
+
+# Include documentation
+recursive-include docs *
+
+# Include tests
+recursive-include tests *
+
+# Include web interface files
+recursive-include exo/interfaces/web *
+
+# Include electron interface files
+recursive-include exo/interfaces/electron *
+
+# Exclude certain files
+global-exclude *.py[cod]
+global-exclude __pycache__
+global-exclude *.so
+global-exclude .DS_Store
+global-exclude *.egg-info
+global-exclude *.egg
+global-exclude .git*
+global-exclude .coverage
+global-exclude htmlcov
+global-exclude .pytest_cache
+global-exclude .tox
+global-exclude .venv
+global-exclude venv
+global-exclude env
+global-exclude ENV
+global-exclude node_modules
+global-exclude .next
+global-exclude out
+global-exclude .idea
+global-exclude .vscode
+global-exclude *.swp
+global-exclude *.swo

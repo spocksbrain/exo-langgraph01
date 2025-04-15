@@ -1,0 +1,15 @@
+User: {user_input}
+
+Context:
+{context}
+
+Previous conversation:
+{conversation_history}
+
+Current time: {current_time}
+
+Desktop context:
+{desktop_context}
+
+Task history:
+{task_history}
