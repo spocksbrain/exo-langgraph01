@@ -21,7 +21,8 @@ def main():
     """Main entry point."""
     parser = argparse.ArgumentParser(description="Run the exo multi-agent system")
     parser.add_argument(
-        "--interface",
+        "interface",
+        nargs="?",
         choices=["cli", "api", "web", "mcp", "electron", "all"],
         default="all",
         help="Interface to run (default: all)",

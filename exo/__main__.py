@@ -35,9 +35,22 @@ def run_api():
 
 
 def run_web():
-    """Run the web interface."""
+    """Run the web interface with API server."""
     import subprocess
     import os
+    import threading
+    import time
+    
+    # Start the API server in a separate thread
+    logger.info("Starting API server...")
+    from exo.api.app import start_api_server
+    api_thread = threading.Thread(target=start_api_server)
+    api_thread.daemon = True
+    api_thread.start()
+    
+    # Wait for the API server to start
+    logger.info("Waiting for API server to start...")
+    time.sleep(2)
     
     # Change to the web directory
     web_dir = os.path.join(os.path.dirname(__file__), "interfaces", "web")
@@ -59,7 +72,23 @@ def run_mcp():
 
 
 def run_electron():
-    """Run the Electron app."""
+    """Run the Electron app with API server."""
+    import threading
+    import time
+    
+    # Start the API server in a separate thread
+    logger.info("Starting API server for Electron app...")
+    from exo.api.app import start_api_server
+    api_thread = threading.Thread(target=start_api_server)
+    api_thread.daemon = True
+    api_thread.start()
+    
+    # Wait for the API server to start
+    logger.info("Waiting for API server to start...")
+    time.sleep(2)
+    
+    # Run the Electron app
+    logger.info("Starting Electron app...")
     from exo.interfaces.electron.__main__ import run_electron_app
     run_electron_app()
 

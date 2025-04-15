@@ -202,8 +202,21 @@ Where `[interface]` is one of:
 The run.py script provides a wrapper around the module-based execution with additional checks:
 
 ```bash
-python run.py --interface [interface] [--debug]
+python run.py [interface] [--debug]
 ```
+
+Where `[interface]` is one of: `cli`, `api`, `web`, `mcp`, `electron`, or `all` (default).
+
+For example:
+```bash
+# Run the CLI interface
+python run.py cli
+
+# Run the web interface with debug logging
+python run.py web --debug
+```
+
+Note: When running the web interface or Electron app, the API server will be automatically started in the background.
 
 #### 3. Interface-Specific Execution
 
