@@ -111,7 +111,7 @@ cp exo/.env.example .env
 ```
 
 3. Edit the `.env` file with your API keys and configuration:
-   - `OPENAI_API_KEY`: Your OpenAI API key (required)
+   - `OPENAI_API_KEY`: Your OpenAI API key (required, must start with "sk-" not "sk-ant-")
    - `EXO_DEFAULT_MODEL` or `DEFAULT_MODEL`: The OpenAI model to use (default: "gpt-4-turbo")
    - `EXO_NEO4J_URI` or `NEO4J_URI`: URI for Neo4j database (optional, for knowledge graph)
    - `EXO_NEO4J_USER` or `NEO4J_USER`: Username for Neo4j database (optional)
@@ -119,6 +119,8 @@ cp exo/.env.example .env
    
    Note: The system will look for a `.env` file in the root directory first, then in the `exo/` directory.
    Both formats (with or without the `EXO_` prefix) are supported for backward compatibility.
+   
+   **Important**: Make sure to use an OpenAI API key (starting with "sk-"), not an Anthropic API key (starting with "sk-ant-"). The system uses the OpenAI API for its LLM functionality.
 
 ### Troubleshooting Installation
 
