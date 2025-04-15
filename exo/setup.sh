@@ -12,6 +12,10 @@ python -m venv venv
 echo "Activating virtual environment..."
 source venv/bin/activate
 
+# Ensure pip and setuptools are installed
+echo "Ensuring pip and setuptools are up to date..."
+pip install --upgrade pip setuptools wheel
+
 # Install dependencies
 echo "Installing dependencies..."
 pip install -r requirements.txt

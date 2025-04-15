@@ -7,6 +7,9 @@ python -m venv venv
 echo Activating virtual environment...
 call venv\Scripts\activate.bat
 
+echo Ensuring pip and setuptools are up to date...
+pip install --upgrade pip setuptools wheel
+
 echo Installing dependencies...
 pip install -r requirements.txt
 
