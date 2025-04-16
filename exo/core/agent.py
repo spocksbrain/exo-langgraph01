@@ -70,16 +70,22 @@ class BaseAgent(ABC):
         
         # Base configuration
         config = {"model": model, "api_key": OPENAI_API_KEY}
-        
+
         # Models that don't support temperature parameter (like o3-mini)
         no_temperature_models = ["o3-mini", "claude-3-opus", "claude-3-sonnet", "claude-3-haiku"]
-        
-        # Only add temperature for models that support it
-        if not any(model_name in model.lower() for model_name in no_temperature_models):
+
+        # Set temperature based on model support
+        if any(model_name in model.lower() for model_name in no_temperature_models):
+            # Explicitly set temperature to None for unsupported models
+            config["temperature"] = None
+        else:
+            # Set default temperature for supported models
             config["temperature"] = 0.1
-        
+
         self.llm_config = {
             "config_list": [config],
+            # Ensure temperature is passed correctly, even if None
+            "temperature": config["temperature"],
         }
         
         # Initialize callbacks
