@@ -80,20 +80,11 @@ class ExoSystem:
         if not pia:
             logger.error("Primary Interface Agent not found")
             return {"error": "System not properly initialized"}
-        
-        # Create a user message
-        message = Message(
-            from_agent="user",
-            to_agent="pia",
-            content=input_text,
-            metadata=metadata or {},
-        )
-        
-        # Send the message to the PIA
-        pia.receive_message(message)
-        
-        # Process the input
+
+        # Directly process the input via PIA's handler method
+        # Removed the redundant pia.receive_message(message) call
         try:
+            # Directly await the PIA's processing method
             result = await pia.process_user_input(input_text, metadata)
             logger.info(f"Processed user input, handled by: {result.get('handled_by', 'unknown')}")
             return result
