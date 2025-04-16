@@ -10,8 +10,8 @@ from typing import Dict, Any, List, Optional, Callable, Union
 
 import autogen
 from autogen import Agent, AssistantAgent, UserProxyAgent
-# Import necessary for direct client usage
-from autogen.oai.client import OAI_CLIENT_CONFIG_KEY, OpenAIWrapper
+# Import OpenAIWrapper for direct client usage
+from autogen.oai.client import OpenAIWrapper
 
 from exo.config import AGENT_CONFIG
 from exo.core.agent import BaseAgent, Message
