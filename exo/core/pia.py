@@ -5,10 +5,13 @@ The PIA serves as the user's primary point of contact with the entire system.
 It processes user input, captures desktop context, and delegates tasks to appropriate agents.
 """
 import asyncio
+import logging
 from typing import Dict, Any, List, Optional, Callable, Union
 
 import autogen
 from autogen import Agent, AssistantAgent, UserProxyAgent
+# Import necessary for direct client usage
+from autogen.oai.client import OAI_CLIENT_CONFIG_KEY, OpenAIWrapper
 
 from exo.config import AGENT_CONFIG
 from exo.core.agent import BaseAgent, Message
@@ -172,20 +175,43 @@ Provide clear, concise feedback about task progress.
         Args:
             input_text: User input text
             
-        Returns:
+            Returns:
             Response to the user
         """
-        # Use autogen to generate a response
-        self.user_proxy.initiate_chat(
-            self.assistant,
-            message=input_text,
-        )
-        
-        # Extract the last assistant message
-        chat_history = self.user_proxy.chat_history[self.assistant]
-        last_message = chat_history[-1]["content"] if chat_history else "I'm sorry, I couldn't process that request."
-        
-        return last_message
+        try:
+            # Directly use the LLM client for a single-turn response
+            # Create a client instance based on the assistant's config
+            # Note: This assumes OpenAIWrapper is appropriate based on llm_config structure
+            client = OpenAIWrapper(**self.assistant.llm_config)
+
+            # Prepare messages for the API call
+            messages = [
+                {"role": "system", "content": self.assistant.system_message},
+                {"role": "user", "content": input_text},
+            ]
+
+            # Make the API call
+            response = client.create(messages=messages)
+
+            # Extract the content from the first choice
+            if response and response.choices:
+                extracted_response = client.extract_text_or_completion_object(response)[0]
+                # Ensure we return a string
+                if isinstance(extracted_response, str):
+                    return extracted_response
+                elif hasattr(extracted_response, 'message') and hasattr(extracted_response.message, 'content'):
+                     # Handle cases where response might be a ChatCompletion object
+                     return extracted_response.message.content
+
+            # Fallback if response is not as expected
+            logging.warning(f"Could not extract valid response for simple query: {input_text}")
+            return "I'm sorry, I couldn't generate a response for that."
+
+        except Exception as e:
+            logging.exception(f"Error handling simple query with direct API call: {e}")
+            # Re-raise or return a specific error message
+            # For now, return a generic error message to the user
+            return f"I encountered an error while processing your simple query: {str(e)}"
     
     async def _delegate_task(self, input_text: str, task_complexity: str) -> Dict[str, Any]:
         """Delegate a task to the appropriate agent.
