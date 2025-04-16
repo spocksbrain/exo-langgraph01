@@ -54,7 +54,7 @@ The exo system consists of:
 
 ### Installation
 
-There are two ways to install the exo system:
+There are three ways to install and run the exo system:
 
 #### Option 1: Using the Setup Scripts (Recommended)
 
@@ -110,17 +110,57 @@ pip install -e .
 cp exo/.env.example .env
 ```
 
-3. Edit the `.env` file with your API keys and configuration:
-   - `OPENAI_API_KEY`: Your OpenAI API key (required, must start with "sk-" not "sk-ant-")
-   - `EXO_DEFAULT_MODEL` or `DEFAULT_MODEL`: The OpenAI model to use (default: "gpt-4-turbo")
-   - `EXO_NEO4J_URI` or `NEO4J_URI`: URI for Neo4j database (optional, for knowledge graph)
-   - `EXO_NEO4J_USER` or `NEO4J_USER`: Username for Neo4j database (optional)
-   - `EXO_NEO4J_PASSWORD` or `NEO4J_PASSWORD`: Password for Neo4j database (optional)
-   
-   Note: The system will look for a `.env` file in the root directory first, then in the `exo/` directory.
-   Both formats (with or without the `EXO_` prefix) are supported for backward compatibility.
-   
-   **Important**: Make sure to use an OpenAI API key (starting with "sk-"), not an Anthropic API key (starting with "sk-ant-"). The system uses the OpenAI API for its LLM functionality.
+#### Option 3: Using run_without_install.py (If Installation Fails)
+
+If you're experiencing issues with package installation, you can use the `run_without_install.py` script that bypasses the need for installing the package:
+
+1. Clone the repository (if you haven't already):
+```bash
+git clone https://github.com/spocksbrain/exo-langgraph01.git
+cd exo-langgraph01
+```
+
+2. Create and activate a virtual environment (if you haven't already):
+```bash
+# On Linux/macOS
+python -m venv venv
+source venv/bin/activate
+
+# On Windows
+python -m venv venv
+venv\Scripts\activate
+```
+
+3. Install the requirements:
+```bash
+pip install -r exo/requirements.txt
+```
+
+4. Create a .env file:
+```bash
+cp exo/.env.example .env
+```
+
+5. Run the system using the special script:
+```bash
+python run_without_install.py cli
+```
+
+This method modifies the Python path directly to include the current directory, bypassing the need for package installation.
+
+### Configuration
+
+Edit the `.env` file with your API keys and configuration:
+- `OPENAI_API_KEY`: Your OpenAI API key (required, must start with "sk-" not "sk-ant-")
+- `EXO_DEFAULT_MODEL` or `DEFAULT_MODEL`: The OpenAI model to use (default: "gpt-4-turbo")
+- `EXO_NEO4J_URI` or `NEO4J_URI`: URI for Neo4j database (optional, for knowledge graph)
+- `EXO_NEO4J_USER` or `NEO4J_USER`: Username for Neo4j database (optional)
+- `EXO_NEO4J_PASSWORD` or `NEO4J_PASSWORD`: Password for Neo4j database (optional)
+
+Note: The system will look for a `.env` file in the root directory first, then in the `exo/` directory.
+Both formats (with or without the `EXO_` prefix) are supported for backward compatibility.
+
+**Important**: Make sure to use an OpenAI API key (starting with "sk-"), not an Anthropic API key (starting with "sk-ant-"). The system uses the OpenAI API for its LLM functionality.
 
 ### Troubleshooting Installation
 
@@ -142,6 +182,12 @@ If you get this error when running `setup.py`, it means the setuptools package i
 pip install setuptools
 ```
 The updated setup scripts should automatically handle this for you.
+
+#### Import errors with autogen version compatibility
+If you see errors related to imports from `autogen.oai.client`, there might be a version compatibility issue. Try:
+
+1. Using the `run_without_install.py` script, which includes fixes for these issues
+2. Or pull the latest code with `git pull origin main` which contains the necessary fixes
 
 #### Node.js and npm issues (Web and Electron interfaces)
 If you encounter issues with the Web or Electron interfaces:
@@ -174,13 +220,29 @@ You may see deprecation warnings about license classifiers when running setup.py
 
 Note: You should not run `python setup.py` directly without any commands. Instead, use `pip install -e .` to install the package in development mode.
 
+#### Repeating Response Loop Issues
+If you encounter a problem where the system repeatedly generates the same response or gets stuck in a loop, the issue has been fixed in the latest code. Pull the latest changes with:
+```bash
+git pull origin main
+```
+
 ### Running the System
 
 There are multiple ways to run the exo system:
 
-#### 1. Using the Module-Based Execution (Recommended)
+#### 1. Using run_without_install.py (Recommended for Installation Issues)
 
-This is the primary way to run the system:
+```bash
+python run_without_install.py [interface] [--debug]
+```
+
+Where `[interface]` is one of: `cli`, `api`, `web`, `mcp`, `electron`, or `all`.
+
+This method is particularly useful if you're experiencing import issues with the traditional installation.
+
+#### 2. Using the Module-Based Execution
+
+This is the primary way to run the system when installed correctly:
 
 ```bash
 # Activate the virtual environment first
@@ -199,7 +261,7 @@ Where `[interface]` is one of:
 - `electron`: Electron desktop app
 - `all`: Run API, MCP, and Electron interfaces together
 
-#### 2. Using the Run Script
+#### 3. Using the Run Script
 
 The run.py script provides a wrapper around the module-based execution with additional checks:
 
@@ -220,7 +282,7 @@ python run.py web --debug
 
 Note: When running the web interface or Electron app, the API server will be automatically started in the background.
 
-#### 3. Interface-Specific Execution
+#### 4. Interface-Specific Execution
 
 You can also run specific interfaces directly:
 
@@ -238,7 +300,7 @@ python -m exo.mcp
 python -m exo.interfaces.electron
 ```
 
-#### 4. Development Server for Web Interface
+#### 5. Development Server for Web Interface
 
 For web development, you can run the Next.js development server directly:
 
@@ -254,6 +316,13 @@ npm run dev
 - `exo/interfaces/`: Multiple user interfaces (CLI, Web, Electron)
 - `exo/knowledge/`: Knowledge graph and vector database integration
 - `exo/mcp/`: Model Context Protocol server implementation
+
+## Recent Updates
+
+- **Fixed repeating responses issue**: Removed redundant message processing in the Primary Interface Agent
+- **Improved compatibility with autogen versions**: Updated import statements to work with autogen 0.8.6+
+- **Added `run_without_install.py`**: New script that can run the system without formal package installation
+- **Enhanced error handling**: Better diagnostics and recovery from API and import errors
 
 ## Features
 
