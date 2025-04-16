@@ -68,24 +68,21 @@ class BaseAgent(ABC):
         # Initialize autogen config
         from exo.config import OPENAI_API_KEY
         
-        # Base configuration
-        config = {"model": model, "api_key": OPENAI_API_KEY}
+        # Base configuration for config_list (model and API key only)
+        config_list_item = {"model": model, "api_key": OPENAI_API_KEY}
 
         # Models that don't support temperature parameter (like o3-mini)
         no_temperature_models = ["o3-mini", "claude-3-opus", "claude-3-sonnet", "claude-3-haiku"]
 
-        # Set temperature based on model support
-        if any(model_name in model.lower() for model_name in no_temperature_models):
-            # Explicitly set temperature to None for unsupported models
-            config["temperature"] = None
-        else:
-            # Set default temperature for supported models
-            config["temperature"] = 0.1
+        # Determine the top-level temperature value
+        top_level_temperature = None
+        if not any(model_name in model.lower() for model_name in no_temperature_models):
+            top_level_temperature = 0.1 # Set default temperature only for supported models
 
         self.llm_config = {
-            "config_list": [config],
-            # Ensure temperature is passed correctly, even if None
-            "temperature": config["temperature"],
+            "config_list": [config_list_item],
+            # Set temperature at the top level, using None for unsupported models
+            "temperature": top_level_temperature,
         }
         
         # Initialize callbacks
